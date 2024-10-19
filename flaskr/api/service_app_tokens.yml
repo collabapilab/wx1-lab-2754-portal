@@ -1,0 +1,8 @@
+access_token: MTU5NzM0MzUtYjBjNC00ZDA4LWE3YWYtNmYzZTkzM2Q0MzMwMzYxYTkxZWMtOGJi_P0A1_3c7390cd-7373-482f-876f-beb8f744d19a
+expires_at: 2024-10-31 00:26:59.290369+00:00
+expires_in: 1209599
+refresh_token: MTE4NmU5NTctYjExNC00MWUwLWJhMWYtYTQyN2IyNjk4YWYwN2UzYTA3MWEtNzhj_P0A1_3c7390cd-7373-482f-876f-beb8f744d19a
+refresh_token_expires_at: 2025-01-14 19:06:22.290369+00:00
+refresh_token_expires_in: 7756762
+scope: spark:kms spark:people_read spark-admin:people_write spark:calls_read spark:people_write
+  spark-admin:licenses_read spark-admin:telephony_config_read spark-admin:people_read
