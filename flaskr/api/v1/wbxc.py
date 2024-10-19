@@ -1,5 +1,4 @@
 import logging
-import json
 from flask import request, jsonify
 from flask_restx import Namespace, Resource
 from flaskr.api.v1.parsers import wbxc_enable_user_args
@@ -29,15 +28,9 @@ def get_person_det(email):
     the Person details, including Webex Calling Data.
     """
     # Create a Service App instance
-    sa = ServiceApp()
 
     # Search all users and find the one containing the email
-    wxc_people_list = list(sa.api.people.list(email=email))
-
-    if len(wxc_people_list) == 1:
-        # Look up user details, including Webex Calling data; the wxc_people_list has exactly one entry at index[0]
-        my_person = sa.api.people.details(person_id=wxc_people_list[0].person_id, calling_data=True)
-        return my_person
+    pass
 
 
 def get_lic_by_name(licenses, name):
@@ -61,11 +54,6 @@ class wbxc_user_api(Resource):
         try:
             # Get the detailed user by email
             target_person = get_person_det(to_email(userid))
-            if not target_person:
-                return jsonify({'success': False, 'message': f'User not found with email {to_email(userid)}'})
-            return jsonify({'success': True,
-                            'message': f'Successfully found user {userid}',
-                            'user_data': target_person.dict()})
 
         except Exception as e:
             # Return any API error that may have been raised
@@ -86,57 +74,8 @@ class wbxc_user_enable_api(Resource):
             args = wbxc_enable_user_args.parse_args(request)
 
             # Get the person details for a user with this email address
-            target_person = get_person_det(to_email(userid))
-            if not target_person:
-                return jsonify({'success': False, 'message': f'User not found with email {to_email(userid)}'})
-
-            # Create a Service App instance
-            sa = ServiceApp()
-
-            # Search all licenses and find the one matching the specified license
-            license_list = list(sa.api.licenses.list())
-            wxc_pro_license = get_lic_by_name(licenses=license_list, name='Webex Calling - Professional')
-            ucm_license = get_lic_by_name(licenses=license_list, name='Unified Communication Manager (UCM)')
-
-            # Find the location provided location name
-            target_location = sa.api.locations.by_name(args['location'])
-            if not target_location:
-                return jsonify({'success': False, 'message': f'Location not found: {args["location"]}'})
-
-            # Look up the user's phone number (set in Active Directory and synched to the Webex work number)
-            target_tn = None
-            for num in target_person.phone_numbers:
-                if num.number_type == 'work':
-                    target_tn = num.value
-            if not target_tn:
-                return jsonify({'success': False,
-                                'message': f'Phone number not configured for user: {userid}'})
 
             # Check if user is already enabled for Webex Calling (i.e. they have a location_id assigned)
-            if not target_person.location_id:
-                # Append the Webex license and remove the Unified Communication Manager (UCM) one, if present
-                target_person.licenses.append(wxc_pro_license.license_id)
-                if ucm_license.license_id in target_person.licenses:
-                    target_person.licenses.remove(ucm_license.license_id)
-
-                # Set the user's location id
-                target_person.location_id = target_location.location_id
-
-                # Update the user
-                sa.api.people.update(person=target_person, calling_data=True)
-
-                return jsonify({'success': True,
-                                'message': f"Successfully enabled Webex Calling for user {userid} on "
-                                           f"location {args['location']} with number {target_tn}",
-                                'user_data': target_person.dict()})
-
-            else:
-                if target_location.location_id == target_person.location_id:
-                    return jsonify({'success': True, 'message': f"User {userid} already enabled for Webex Calling in "
-                                                                f"location {args['location']}"})
-                else:
-                    return jsonify({'success': False, 'message': f"User {userid} already enabled for Webex Calling "
-                                                                 f"but not in location {args['location']}"})
 
         # Return any REST error that may have been raised
         except RestError as e:

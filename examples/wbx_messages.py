@@ -15,15 +15,7 @@ log = logging.getLogger(__name__)
 wbx_bot_access_token = '___PASTE_YOUR_BOT_ACCESS_TOKEN_HERE___'
 
 # Create an instance of the WebexSimpleApi with your Bot
-api = WebexSimpleApi(tokens=wbx_bot_access_token)
 
 # Get the Bot's Rooms list (only group type, not direct)
-rooms = list(api.rooms.list(type='group'))
-
-# Search through rooms
-for room in rooms:
-    log.info(room.model_dump_json(indent=4))
 
 # Send a message to this Room
-msg = api.messages.create(room_id=room.id, text='Hello!')
-log.info(f'Message sent:\n{msg.model_dump_json(indent=4)}')

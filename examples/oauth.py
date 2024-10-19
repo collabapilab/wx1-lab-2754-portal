@@ -10,12 +10,10 @@ import socketserver
 from wxc_sdk import WebexSimpleApi
 
 # Replace with your values from the Integration
-client_id = '___PASTE_SERVICE_APP_CLIENT_ID___'
-client_secret = '___PASTE_SERVICE_APP_CLIENT_SECRET___'
+client_id = '___PASTE_INTEGRATION_CLIENT_ID___'
+client_secret = '___PASTE_INTEGRATION_CLIENT_SECRET___'
 
 # Add the redirect_url and scopes
-redirect_url = "http://localhost:5002/redirect"
-scopes = 'spark:kms spark:people_read meetings:schedules_read meetings:schedules_write'
 
 
 # Set up logging with a default level of INFO
@@ -26,7 +24,6 @@ logging.basicConfig(level=logging.INFO, format='%(asctime)s %(levelname)s %(name
 log = logging.getLogger(__name__)
 server_port = 5002
 authorization_code = None
-
 
 def get_access_token(code):
     """

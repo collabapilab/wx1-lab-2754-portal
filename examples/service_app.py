@@ -22,9 +22,9 @@ import requests
 from wxc_sdk import WebexSimpleApi
 
 # Replace with your Service App's parameters
-client_id = '___PASTE_SERVICE_APP_CLIENT_ID___'
-client_secret = '___PASTE_SERVICE_APP_CLIENT_SECRET___'
-refresh_token = '___PASTE_SERVICE_APP_REFRESH_TOKEN___'
+client_id = '___REPLACE_WITH_SERVICE_APP_CLIENT_ID___'
+client_secret = "___REPLACE_WITH_SERVICE_APP_CLIENT_SECRET___"
+refresh_token = "___REPLACE_WITH_SERVICE_APP_REFRESH_TOKEN___"
 
 # Set up logging with a default level of INFO
 logging.basicConfig(level=logging.INFO, format='%(asctime)s %(levelname)s %(name)s %(message)s')
@@ -41,11 +41,6 @@ headers = {
 }
 
 # Request a new access token and refresh token
-payload = f"grant_type=refresh_token&client_id={client_id}" \
-          f"&client_secret={client_secret}" \
-          f"&refresh_token={refresh_token}"
-
-response = requests.post(url='https://webexapis.com/v1/access_token', data=payload, headers=headers)
 
 results = json.loads(response.text)
 log.info(f'Response:\n{json.dumps(results, indent=4)}')  # Prettier way of printing the response data

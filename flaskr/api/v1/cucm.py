@@ -23,11 +23,6 @@ cucm_user = getenv('CUCM_USERNAME')
 cucm_pass = getenv('CUCM_PASSWORD')
 
 # Core CUCM SOAP API Python Class Instances
-myAXL = AXL(cucm_host, cucm_user, cucm_pass)
-myPAWSVersionService = PAWS(cucm_host, cucm_user, cucm_pass, 'VersionService')
-mySXMLRisPort70Service = SXML(cucm_host, cucm_user, cucm_pass, 'realtimeservice2')
-mySXMLControlCenterServicesService = SXML(cucm_host, cucm_user, cucm_pass, 'controlcenterservice2')
-mySXMLPerfMonService = SXML(cucm_host, cucm_user, cucm_pass, 'perfmonservice2')
 
 ###########################################
 
@@ -63,7 +58,7 @@ class cucm_phone_api(Resource):
         https://pubhub.devnetcloud.com/media/axl-schema-reference/docs/Files/AXLSoap_getPhone.html
         """
         try:
-            axlresult = myAXL.get_phone(device_name)
+            raise Exception('Not implemented yet!!')
         except Exception as e:
             apiresult = {'success': False, 'message': str(e)}
             return jsonify(apiresult)
@@ -85,60 +80,7 @@ class cucm_phone_api(Resource):
         <br>
         """
         try:
-            cucm_add_phone_query_parsed_args = cucm_add_phone_query_args.parse_args(request)
-            axl_get_user_result = myAXL.get_user(userid=cucm_add_phone_query_parsed_args['ownerUserName'])
-            user_telephoneNumber = None
-            if axl_get_user_result['return']['user'].get('telephoneNumber'):
-                user_telephoneNumber = re.sub(r"^\+", "\\+", axl_get_user_result['return']['user']['telephoneNumber'])
-            user_associatedDevices = []
-            if axl_get_user_result['return']['user']['associatedDevices']:
-                user_associatedDevices = axl_get_user_result['return']['user']['associatedDevices']['device']
-
-            cucm_add_phone_data_dict = {
-                "name": device_name,
-                "description": cucm_add_phone_query_parsed_args['description'],
-                "product": cucm_add_phone_query_parsed_args['phonetype'],
-                "class": "Phone",
-                "protocol": "SIP",
-                "protocolSide": "User",
-                "commonPhoneConfigName": "Standard Common Phone Profile",
-                "callingSearchSpaceName": cucm_add_phone_query_parsed_args['devicecss'],
-                "devicePoolName": "Default",
-                "locationName": "Hub_None",
-                "securityProfileName": "Universal Device Template - Model-independent Security Profile",
-                "sipProfileName": "Standard SIP Profile",
-                "ownerUserName": cucm_add_phone_query_parsed_args['ownerUserName'],
-                "lines": {
-                    "line": {
-                        "index": "1",
-                        "dirn": {
-                            "pattern": user_telephoneNumber,
-                            "routePartitionName": 'DN_PT'
-                        },
-                        "display": cucm_add_phone_query_parsed_args['calleridname'],
-                        "displayAscii": cucm_add_phone_query_parsed_args['calleridname'],
-                        "associatedEndusers": {
-                                "enduser": {
-                                    "userId": cucm_add_phone_query_parsed_args['ownerUserName']
-                                }
-                        }
-                    }
-                }
-            }
-
-            axl_add_phone_result = myAXL.add_phone(phone_data=cucm_add_phone_data_dict)
-            user_associatedDevices.append(device_name)
-            cucm_update_user_data_dict = {
-                "userid": cucm_add_phone_query_parsed_args['ownerUserName'],
-                'primaryExtension': {
-                    "pattern": user_telephoneNumber,
-                    "routePartitionName": 'DN_PT'
-                },
-                "associatedDevices": {
-                    'device': user_associatedDevices
-                }
-            }
-            axl_update_user_result = myAXL.update_user(user_data=cucm_update_user_data_dict)
+            raise Exception('Not implemented yet!!')
         except Exception as e:
             apiresult = {'success': False, 'message': str(e)}
             return jsonify(apiresult)
@@ -159,15 +101,7 @@ class cucm_phone_api(Resource):
         https://pubhub.devnetcloud.com/media/axl-schema-reference/docs/Files/AXLSoap_applyPhone.html
         """
         try:
-            cucm_update_phone_query_parsed_args = cucm_update_phone_query_args.parse_args(request)
-            phone_update_data = {
-                "name": device_name,
-                "description": cucm_update_phone_query_parsed_args["description"],
-                "isActive": cucm_update_phone_query_parsed_args["isActive"],
-                "callingSearchSpaceName": cucm_update_phone_query_parsed_args["callingSearchSpaceName"]
-            }
-            axl_update_phone_result = myAXL.update_phone(phone_data=phone_update_data)
-            myAXL.apply_phone(device_name)
+            raise Exception('Not implemented yet!!')
         except Exception as e:
             apiresult = {'success': False, 'message': str(e)}
             return jsonify(apiresult)
@@ -184,7 +118,7 @@ class cucm_phone_api(Resource):
         https://pubhub.devnetcloud.com/media/axl-schema-reference/docs/Files/AXLSoap_removePhone.html
         """
         try:
-            axlresult = myAXL.delete_phone(device_name)
+            raise Exception('Not implemented yet!!')
         except Exception as e:
             apiresult = {'success': False, 'message': str(e)}
             return jsonify(apiresult)
@@ -204,7 +138,7 @@ class cucm_user_api(Resource):
         https://pubhub.devnetcloud.com/media/axl-schema-reference/docs/Files/AXLSoap_getUser.html
         """
         try:
-            axlresult = myAXL.get_user(userid)
+            raise Exception('Not implemented yet!!')
         except Exception as e:
             apiresult = {'success': False, 'message': str(e)}
             return jsonify(apiresult)
@@ -248,23 +182,7 @@ class cucm_device_search_api(Resource):
 
         """
         try:
-            cucm_device_search_criteria_query_parsed_args = cucm_device_search_criteria_query_args.parse_args(request)
-            SearchItems = []
-            if ',' in cucm_device_search_criteria_query_parsed_args['SearchItems']:
-                SearchItems_str = cucm_device_search_criteria_query_parsed_args['SearchItems']
-                SearchItems = list(map(str.strip, SearchItems_str.split(',')))
-            else:
-                SearchItems.append(cucm_device_search_criteria_query_parsed_args['SearchItems'])
-            ris_search_criteria = {
-                'SelectBy': cucm_device_search_criteria_query_parsed_args['SearchBy'],
-                'MaxReturnedDevices': 1000,
-                'Status': cucm_device_search_criteria_query_parsed_args['Status'],
-                'SelectItems': []
-            }
-            for SearchItem in SearchItems:
-                SelectItem_dict = {'item': SearchItem}
-                ris_search_criteria['SelectItems'].append(SelectItem_dict)
-            risresult = mySXMLRisPort70Service.ris_query(search_criteria=ris_search_criteria)
+            raise Exception('Not implemented yet!!')
         except Exception as e:
             apiresult = {'success': False, 'message': str(e)}
             return jsonify(apiresult)
@@ -287,12 +205,7 @@ class cucm_service_api(Resource):
 
         """
         try:
-            cucm_service_status_query_parsed_args = cucm_service_status_query_args.parse_args(request)
-            service_list = None
-            if cucm_service_status_query_parsed_args['Services'] is not None:
-                services_str = cucm_service_status_query_parsed_args['Services']
-                service_list = list(map(str.strip, services_str.split(',')))
-            ccsresult = mySXMLControlCenterServicesService.ccs_get_service_status(service_list=service_list)
+            raise Exception('Not implemented yet!!')
         except Exception as e:
             apiresult = {'success': False, 'message': str(e)}
             return jsonify(apiresult)
@@ -325,38 +238,7 @@ class cucm_perfmon_api(Resource):
 
         """
         try:
-            # If no perfmon_class and perfmon_counters are passed via api.payload and via post method arguments, we can't proceed
-            if not ('perfmon_class' in api.payload or 'perfmon_counters' in api.payload) and not (perfmon_class or perfmon_counters):
-                raise Exception(f"perfmon_class or perfmon_counters is required in the payload or post method arguments")
-
-            # If perfmon_class is NOT defined via post method argument but its in the api.payload then use it
-            if not perfmon_class and api.payload.get('perfmon_class'):
-                perfmon_class = api.payload.get('perfmon_class')
-            if perfmon_class:
-                perfmon_class_result = mySXMLPerfMonService.perfmon_query_class(perfmon_class_name=perfmon_class)
-            # If perfmon_class is still not defined then set result to None
-            else:
-                perfmon_class_result = None
-
-            # If perfmon_counters is NOT defined via post method argument but its in the api.payload then use it
-            if not perfmon_counters and api.payload.get('perfmon_counters'):
-                perfmon_counters = api.payload.get('perfmon_counters')
-            if perfmon_counters:
-                perfmon_session_handle = mySXMLPerfMonService.perfmon_open_session()
-                perfmon_counter_list = []
-                for counter in perfmon_counters:
-                    perfmon_counter_list.append(f"\\\\{cucm_host}\\" + counter)
-                if not mySXMLPerfMonService.perfmon_add_counter(session_handle=perfmon_session_handle, counters=perfmon_counter_list):
-                    mySXMLPerfMonService.perfmon_close_session(session_handle=perfmon_session_handle)
-                    raise Exception(f"Failed to Query Counters: {api.payload['perfmon_counters']}")
-                perfmon_counters_result = mySXMLPerfMonService.perfmon_collect_session_data(session_handle=perfmon_session_handle)
-                if any(("%" in counter) or ("Percentage" in counter) for counter in perfmon_counters):
-                    sleep(5)
-                    perfmon_counters_result = mySXMLPerfMonService.perfmon_collect_session_data(session_handle=perfmon_session_handle)
-                mySXMLPerfMonService.perfmon_close_session(session_handle=perfmon_session_handle)
-            # If perfmon_class is still not defined then set result to None
-            else:
-                perfmon_counters_result = None
+            raise Exception('Not implemented yet!!')
         except Exception as e:
             apiresult = {'success': False, 'message': str(e)}
             return jsonify(apiresult)
